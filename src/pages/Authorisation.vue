@@ -22,11 +22,10 @@
       <!-- Правая форма -->
       <div class="form-panel flex-1 p-8 md:p-14 min-w-[350px] bg-white">
         <header class="text-center mb-8">
-          <h2 class="text-4xl font-black text-gray-900">CREATE ACCOUNT</h2>
+          <h2 class="text-4xl font-black text-gray-900">SIGN IN</h2>
         </header>
 
         <form @submit.prevent="submitForm">
-          <!-- Поля -->
           <div v-for="field in formFields" :key="field.key" class="mb-4">
             <label :for="field.key" class="block text-sm font-medium text-gray-700">
               {{ field.label }}
@@ -42,7 +41,7 @@
             />
           </div>
 
-          <div class="flex justify-end space-x-4 pt-8">
+          <div class="flex justify-end gap-4 pt-8">
             <button
               type="button"
               class="px-8 py-3 bg-gray-600 text-white rounded-md font-bold uppercase"
@@ -55,16 +54,16 @@
               type="submit"
               class="px-8 py-3 bg-indigo-600 text-white rounded-md font-bold uppercase"
             >
-              Confirm
+              Login
             </button>
           </div>
         </form>
 
-        <!-- Ссылка на вход -->
+        <!-- Ссылка на регистрацию -->
         <div class="text-center mt-6">
-          <span class="text-gray-500 text-sm">Already have an account? </span>
-          <button @click="goToLogin" class="text-indigo-600 font-medium hover:underline text-sm">
-            Sign In
+          <span class="text-gray-500 text-sm">Don't have an account? </span>
+          <button @click="goToRegister" class="text-indigo-600 font-medium hover:underline text-sm">
+            Sign Up
           </button>
         </div>
       </div>
@@ -81,52 +80,42 @@ const router = useRouter()
 const brandingImageUrl = '../assets/img/premium-sneakers-bg.jpg'
 
 const formData = reactive({
-  name: '',
   email: '',
   password: '',
 })
 
 const formFields = [
-  { key: 'name', label: 'Name', type: 'text', placeholder: 'Type your Name' },
   { key: 'email', label: 'Email', type: 'email', placeholder: 'Type your Email' },
   { key: 'password', label: 'Password', type: 'password', placeholder: 'Type your Password' },
 ]
 
 const submitForm = async () => {
   try {
-    // Регистрация
-    await axios.post('http://localhost:5000/auth/register', {
-      username: formData.name,
+    const response = await axios.post('http://localhost:5000/auth/login', {
       email: formData.email,
       password: formData.password,
     })
 
-    // Авто-логин после регистрации
-    const loginResponse = await axios.post('http://localhost:5000/auth/login', {
-      email: formData.email,
-      password: formData.password,
-    })
-
-    localStorage.setItem('token', loginResponse.data.token)
-    localStorage.setItem('user', JSON.stringify(loginResponse.data.user))
+    localStorage.setItem('token', response.data.token)
+    localStorage.setItem('user', JSON.stringify(response.data.user))
     localStorage.setItem('isAuthenticated', 'true')
 
     Object.keys(formData).forEach((key) => (formData[key] = ''))
 
     router.push('/home')
   } catch (error) {
-    console.error('Ошибка при регистрации/логине:', error.response?.data || error.message)
+    console.error('Ошибка при входе:', error.response?.data || error.message)
   }
 }
 
-// Очистка формы + редирект на Home
+// Очистка формы и переход на Home
 const cancelForm = () => {
   Object.keys(formData).forEach((key) => (formData[key] = ''))
   router.push('/home')
 }
 
-// Перейти на страницу входа
-const goToLogin = () => router.push('/auth-page')
+// Перейти на регистрацию
+const goToRegister = () => router.push('/register-page')
 </script>
 
 <style scoped>
