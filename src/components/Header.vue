@@ -1,55 +1,79 @@
+<script setup>
+const props = defineProps({
+  cartItemsCount: {
+    type: Number,
+    default: 0
+  }
+})
+
+const emit = defineEmits(['openCart'])
+
+const handleOpenCart = () => {
+  emit('openCart')
+}
+</script>
+
 <template>
-  <header
-    class="flex justify-between items-center bg-white rounded-2xl p-6  mt-10 border border-slate-200"
-  >
-
-    <div class="flex items-center gap-4">
-      <img
-        src="../assets/img/logo.png"
-        alt="Logo"
-        class="w-16 h-16 rounded-full object-cover"
-      />
-
+  <header class="flex flex-col md:flex-row justify-between items-center p-6 bg-white rounded-2xl shadow-md mb-10">
+    
+    <!-- Логотип -->
+    <div class="flex items-center gap-4 mb-4 md:mb-0">
+      <img src="../assets/img/logo.png" alt="Logo" class="w-14 h-14 rounded-full object-cover shadow-sm" />
       <div>
-        <h2 class="text-3xl font-black tracking-wide text-black uppercase">
-          SNKR
-        </h2>
-        <p class="text-sm text-slate-500">
-          Premium Sneakers Store
-        </p>
+        <h1 class="text-2xl font-extrabold tracking-wide text-gray-900">Sneaker Store</h1>
+        <p class="text-gray-500 text-sm">Магазин лучших кроссовок</p>
       </div>
     </div>
 
-    <ul class="flex items-center gap-8 text-black">
+    <!-- Навигация -->
+    <div class="flex items-center gap-4 md:gap-6">
+      
+      <!-- Корзина -->
+      <button 
+        @click="handleOpenCart"
+        class="relative flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors shadow-sm hover:shadow-md"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        <span class="hidden md:block font-semibold text-gray-700">Корзина</span>
 
-      <li class="flex items-center gap-2 cursor-pointer group">
-        <img
-          src="../assets/img/cart.svg"
-          alt="Cart"
-          class="w-6 h-6 opacity-70 group-hover:opacity-100 transition"
-        />
-        <span class="font-semibold text-lg">15.000₸</span>
-      </li>
+        <!-- Счетчик товаров -->
+        <span 
+          v-if="cartItemsCount > 0"
+          class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse"
+        >
+          {{ cartItemsCount > 9 ? '9+' : cartItemsCount }}
+        </span>
+      </button>
 
-      <li class="flex items-center gap-2 cursor-pointer group">
-        <img
-          src="../assets/img/heart.svg"
-          alt="Saved"
-          class="w-6 h-6 opacity-70 group-hover:opacity-100 transition"
-        />
-        <span class="font-medium text-lg">Saved</span>
-      </li>
-
-      <li class="flex items-center gap-2 cursor-pointer group">
-        <img
-          src="../assets/img/user.svg"
-          alt="Profile"
-          class="w-6 h-6 opacity-70 group-hover:opacity-100 transition"
-        />
-        <span class="font-medium text-lg">Profile</span>
-      </li>
-
-    </ul>
-
+      <!-- Профиль -->
+      <button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors shadow-sm hover:shadow-md">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        <span class="hidden md:block text-gray-700 font-medium">Профиль</span>
+      </button>
+    </div>
   </header>
 </template>
+
+<style scoped>
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 1s infinite;
+}
+
+button:active {
+  transform: scale(0.97);
+  transition: transform 0.1s;
+}
+</style>
