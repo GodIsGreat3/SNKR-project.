@@ -1,102 +1,118 @@
 <script setup>
+import { defineProps } from 'vue'
 import { useRouter } from 'vue-router'
-import ItemCartList from './ItemCartList.vue'
 
 const props = defineProps({
+  isOpen: Boolean,
   cart: Array,
   totalPrice: Number,
   taxAmount: Number,
-  finalPrice: Number
+  finalPrice: Number,
 })
 
-const emit = defineEmits(['close', 'removeItem', 'updateQuantity', 'checkout'])
+const emit = defineEmits(['close', 'remove-item', 'update-quantity', 'checkout'])
+const router = useRouter()
 
-const router = useRouter() 
+const increase = (item) => emit('update-quantity', item.id, item.quantity + 1)
+const decrease = (item) => {
+  if (item.quantity > 1) emit('update-quantity', item.id, item.quantity - 1)
+}
 
-const handleClose = () => {
+const goToCart = () => {
+  router.push('/cart')
   emit('close')
-}
-
-const handleRemoveItem = (itemId) => {
-  emit('removeItem', itemId)
-}
-
-const handleUpdateQuantity = (itemId, quantity) => {
-  emit('updateQuantity', itemId, quantity)
-}
-
-// Изменяем checkout
-const handleCheckout = () => {
-  if (props.cart.length > 0) {
-
-    emit('checkout')
-    emit('close')
-
-    router.push('/cart') 
-  }
 }
 </script>
 
 <template>
-  <div>
-    <div 
-      class="fixed top-0 left-0 w-full h-full bg-black opacity-70"
-      style="z-index: 999;"
-      @click="handleClose"
-    ></div>
-    
-    <div class="bg-white w-96 h-full fixed right-0 top-0 p-8 flex flex-col" style="z-index: 1000;">
-      <div class="flex items-center gap-4 mb-6">
-        <img 
-          src = "../assets/img/arrow.png"
-          alt="Закрыть" 
-          class="w-7 h-7 cursor-pointer hover:opacity-70 transition-opacity" 
-          @click="handleClose"
-        />
-        <h2 class="text-3xl font-bold">Корзина</h2>
-      </div>
-
-      <div class="flex-1 overflow-y-auto mb-6">
-        <div v-if="cart.length === 0" class="text-center text-gray-500 mt-10">
-          <p class="text-lg">Корзина пуста</p>
-          <p class="text-sm mt-2">Добавьте товары для покупки</p>
-        </div>
-        
-        <ItemCartList 
-          v-else
-          :items="cart"
-          @removeItem="handleRemoveItem"
-          @updateQuantity="handleUpdateQuantity"
-        />
-      </div>
-
-      <div class="flex flex-col gap-4 mb-7">
-        <div class="flex gap-2">
-          <span>Полная цена:</span>
-          <div class="flex-1 border-b border-dashed"></div>
-          <b>{{ totalPrice }} ₸</b>
-        </div>
-
-        <div class="flex gap-2">
-          <span>Налог 5%:</span>
-          <div class="flex-1 border-b border-dashed"></div>
-          <b>{{ taxAmount }} ₸</b>
-        </div>
-
-        <div class="flex gap-2 text-lg">
-          <span>Итого:</span>
-          <div class="flex-1 border-b border-dashed"></div>
-          <b>{{ finalPrice }} ₸</b>
-        </div>
-      </div>
-
-      <button 
-        :disabled="cart.length === 0"
-        @click="handleCheckout"
-        class="bg-black w-full rounded-xl py-3 text-white hover:bg-gray-700 active:bg-gray-800 disabled:bg-slate-300 disabled:cursor-not-allowed cursor-pointer transition-colors"
-      >
-        {{ cart.length === 0 ? 'Корзина пуста' : 'Купить сейчас!' }}
+  <transition name="slide">
+    <div
+      v-if="isOpen"
+      class="fixed top-0 right-0 w-96 h-full bg-white shadow-2xl p-6 z-50 flex flex-col"
+    >
+      <button @click="$emit('close')" class="absolute top-4 right-4 text-gray-500 text-2xl">
+        ×
       </button>
+
+      <h2 class="text-2xl font-bold mb-4">Cart</h2>
+
+      <div class="flex-1 overflow-y-auto space-y-4">
+        <div
+          v-for="item in cart"
+          :key="item.id"
+          class="flex items-center justify-between p-4 border rounded-2xl shadow-md border-gray-200/30 hover:shadow-xl transition-all duration-300 bg-white"
+        >
+          <div class="flex items-center space-x-4">
+            <img
+              :src="item.image"
+              alt="product"
+              class="w-20 h-20 object-cover rounded-lg shadow-sm"
+            />
+            <div class="flex flex-col">
+              <p class="text-lg font-semibold text-gray-900">{{ item.name }}</p>
+              <p class="text-gray-500">{{ item.price }} ₸</p>
+
+              <div class="mt-2 flex items-center space-x-2">
+                <button
+                  @click="decrease(item)"
+                  class="px-2 py-1 bg-gray-100 rounded-lg font-bold hover:bg-gray-200 transition"
+                >
+                  -
+                </button>
+                <span class="font-semibold">{{ item.quantity }}</span>
+                <button
+                  @click="increase(item)"
+                  class="px-2 py-1 bg-gray-100 rounded-lg font-bold hover:bg-gray-200 transition"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+          <button
+            @click="$emit('remove-item', item.id)"
+            class="text-red-500 font-bold text-2xl hover:text-red-600 transition"
+          >
+            ×
+          </button>
+        </div>
+
+        <p v-if="cart.length === 0" class="text-gray-400 text-center">Cart is empty</p>
+      </div>
+
+      <div class="mt-6 border-t pt-4">
+        <div class="flex justify-between text-lg font-medium text-gray-700">
+          <span>Total price:</span>
+          <span>{{ totalPrice }} ₸</span>
+        </div>
+        <div class="flex justify-between text-lg font-medium text-gray-700">
+          <span>TAX 5%:</span>
+          <span>{{ taxAmount }} ₸</span>
+        </div>
+        <div class="flex justify-between text-xl font-bold text-gray-900 mt-2">
+          <span>Final price:</span>
+          <span>{{ finalPrice }} ₸</span>
+        </div>
+
+        <button
+          @click="goToCart"
+          class="mt-4 w-full py-3 bg-black text-white font-bold rounded-2xl hover:bg-gray-800 transition"
+        >
+          Buy now!
+        </button>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
+
+<style scoped>
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+</style>

@@ -3,7 +3,6 @@
     <div
       class="flex w-full max-w-6xl bg-gray-900 rounded-lg shadow-2xl shadow-gray-700 overflow-hidden"
     >
-      <!-- Левая панель -->
       <div
         class="branding-panel flex-1 p-8 text-white flex flex-col justify-between min-w-[300px] bg-cover bg-center"
         :style="{
@@ -19,14 +18,12 @@
         </div>
       </div>
 
-      <!-- Правая форма -->
       <div class="form-panel flex-1 p-8 md:p-14 min-w-[350px] bg-white">
         <header class="text-center mb-8">
           <h2 class="text-4xl font-black text-gray-900">CREATE ACCOUNT</h2>
         </header>
 
         <form @submit.prevent="submitForm">
-          <!-- Поля -->
           <div v-for="field in formFields" :key="field.key" class="mb-4">
             <label :for="field.key" class="block text-sm font-medium text-gray-700">
               {{ field.label }}
@@ -60,7 +57,6 @@
           </div>
         </form>
 
-        <!-- Ссылка на вход -->
         <div class="text-center mt-6">
           <span class="text-gray-500 text-sm">Already have an account? </span>
           <button @click="goToLogin" class="text-indigo-600 font-medium hover:underline text-sm">
@@ -94,14 +90,12 @@ const formFields = [
 
 const submitForm = async () => {
   try {
-    // Регистрация
     await axios.post('http://localhost:5000/auth/register', {
       username: formData.name,
       email: formData.email,
       password: formData.password,
     })
 
-    // Авто-логин после регистрации
     const loginResponse = await axios.post('http://localhost:5000/auth/login', {
       email: formData.email,
       password: formData.password,
@@ -119,13 +113,11 @@ const submitForm = async () => {
   }
 }
 
-// Очистка формы + редирект на Home
 const cancelForm = () => {
   Object.keys(formData).forEach((key) => (formData[key] = ''))
   router.push('/home')
 }
 
-// Перейти на страницу входа
 const goToLogin = () => router.push('/auth-page')
 </script>
 

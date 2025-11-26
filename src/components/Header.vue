@@ -12,15 +12,12 @@ const props = defineProps({
 const emit = defineEmits(['openCart'])
 const router = useRouter()
 
-// Статус авторизации
 const isAuthenticated = ref(false)
 
 onMounted(() => {
-  // Проверяем при монтировании компонента
   isAuthenticated.value = localStorage.getItem('isAuthenticated') === 'true'
 })
 
-// Выход без перенаправления
 const logout = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('user')
@@ -28,10 +25,8 @@ const logout = () => {
   isAuthenticated.value = false
 }
 
-// Открыть корзину
 const handleOpenCart = () => emit('openCart')
 
-// Перейти на авторизацию
 const goToAuth = () => router.push('/auth-page')
 </script>
 
@@ -39,7 +34,6 @@ const goToAuth = () => router.push('/auth-page')
   <header
     class="flex flex-col md:flex-row justify-between items-center p-6 bg-white rounded-2xl shadow-md mb-10"
   >
-    <!-- Логотип -->
     <div class="flex items-center gap-4 mb-4 md:mb-0">
       <img
         src="../assets/img/logo.png"
@@ -47,14 +41,12 @@ const goToAuth = () => router.push('/auth-page')
         class="w-14 h-14 rounded-full object-cover shadow-sm"
       />
       <div>
-        <h1 class="text-2xl font-extrabold tracking-wide text-gray-900">Sneaker Store</h1>
-        <p class="text-gray-500 text-sm">Магазин лучших кроссовок</p>
+        <h1 class="text-2xl font-extrabold tracking-wide text-gray-900">SNKR SHOP</h1>
+        <p class="text-gray-500 text-sm">The best kicks worldwide.</p>
       </div>
     </div>
 
-    <!-- Навигация -->
     <div class="flex items-center gap-4 md:gap-6">
-      <!-- Корзина -->
       <button
         @click="handleOpenCart"
         class="relative flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors shadow-sm hover:shadow-md"
@@ -75,7 +67,6 @@ const goToAuth = () => router.push('/auth-page')
         </svg>
         <span class="hidden md:block font-semibold text-gray-700">Cart</span>
 
-        <!-- Счётчик товаров -->
         <span
           v-if="cartItemsCount > 0"
           class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse"
@@ -103,7 +94,7 @@ const goToAuth = () => router.push('/auth-page')
             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
           />
         </svg>
-        <span class="hidden md:block text-gray-700 font-medium">Авторизация</span>
+        <span class="hidden md:block text-gray-700 font-medium">Autorisation</span>
       </button>
 
       <button
@@ -125,7 +116,7 @@ const goToAuth = () => router.push('/auth-page')
             d="M17 16l4-4m0 0l-4-4m4 4H7"
           />
         </svg>
-        <span class="hidden md:block font-medium">Выход</span>
+        <span class="hidden md:block font-medium">Logout</span>
       </button>
     </div>
   </header>

@@ -2,17 +2,18 @@
 const props = defineProps({
   imageUrl: { type: String, required: true },
   name: { type: String, required: true },
-  price: { type: String, required: true }
-});
+  price: { type: String, required: true },
+})
 
 const emit = defineEmits(['add-to-cart'])
 
 const handleAddToCart = () => {
   emit('add-to-cart', {
-    id: props.name + props.price, 
+    id: props.name + props.price,
     name: props.name,
     price: Number(props.price.replace(/\s|₸/g, '')),
-    image: props.imageUrl
+    image: props.imageUrl,
+    quantity: 1,
   })
 }
 </script>
@@ -35,7 +36,6 @@ const handleAddToCart = () => {
 
     <div class="mt-2 flex justify-between items-center">
       <span class="text-lg font-medium text-slate-800">{{ price }}</span>
-
 
       <!-- это чтобы добавлять в карт -->
       <button
